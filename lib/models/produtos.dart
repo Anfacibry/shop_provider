@@ -1,8 +1,10 @@
-class Produtos {
+import 'package:flutter/cupertino.dart';
+
+class Produtos extends ChangeNotifier {
   final String id;
   final String titulo;
   final String descricao;
-  final String preco;
+  final double preco;
   final String imagemUrl;
   bool eFavorito;
 
@@ -17,5 +19,6 @@ class Produtos {
 
   void verificacaoFavorito() {
     eFavorito = !eFavorito;
+    notifyListeners();
   }
 }
