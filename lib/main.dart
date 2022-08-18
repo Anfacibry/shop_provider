@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_provider/models/carrinho.dart';
 import 'package:shop_provider/models/lista_produtos.dart';
 import 'package:shop_provider/screens/tela_detalhes_produtos.dart';
 import 'package:shop_provider/screens/tela_produtos.dart';
 import 'package:shop_provider/utils/rotas_app.dart';
 
 void main() => runApp(
-      ChangeNotifierProvider(
-        create: (context) => ListaProdutos(),
+      ///Carregamento de multiplos provides
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (cntxProvListProdu) => ListaProdutos(),
+          ),
+          ChangeNotifierProvider(
+            create: (cntxProvCarrinho) => Carrinho(),
+          ),
+        ],
         child: const ShopProvider(),
       ),
     );
