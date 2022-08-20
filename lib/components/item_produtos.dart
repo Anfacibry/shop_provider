@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_provider/models/carrinho.dart';
 import 'package:shop_provider/models/produtos.dart';
 
 import 'package:shop_provider/utils/rotas_app.dart';
@@ -10,6 +11,7 @@ class ItemProdutos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Produtos produtos = Provider.of<Produtos>(context);
+    final Carrinho carrinho = Provider.of<Carrinho>(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -33,7 +35,9 @@ class ItemProdutos extends StatelessWidget {
             ),
           ),
           trailing: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              carrinho.adicionandoItemCarrinho(produtos);
+            },
             icon: Icon(
               Icons.shopping_cart,
               color: Theme.of(context).colorScheme.secondary,
