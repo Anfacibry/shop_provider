@@ -43,6 +43,7 @@ class Carrinho extends ChangeNotifier {
         ),
       );
     }
+    notifyListeners();
   }
 
   void removendoItemCarrinho(String idProduto) {
