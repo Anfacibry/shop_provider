@@ -46,6 +46,42 @@ class Carrinho extends ChangeNotifier {
     notifyListeners();
   }
 
+  void excluindoItemCarrinho(ItemCarrinho itemCarrinho) {
+    if (_itensCarrinho.containsKey(itemCarrinho.idProduto)) {
+      if (itemCarrinho.quantidade > 1) {
+        _itensCarrinho.update(
+          itemCarrinho.idProduto,
+          (itemCarrinhoPego) => ItemCarrinho(
+            id: itemCarrinhoPego.id,
+            idProduto: itemCarrinhoPego.idProduto,
+            produtoTitulo: itemCarrinhoPego.produtoTitulo,
+            quantidade: itemCarrinhoPego.quantidade - 1,
+            preco: itemCarrinhoPego.preco,
+          ),
+        );
+      } else {
+        _itensCarrinho.remove(itemCarrinho.idProduto);
+      }
+    }
+    notifyListeners();
+  }
+
+  void atualizandoQuantidadeItemCarrinho({required ItemCarrinho itemCarrinho}) {
+    if (_itensCarrinho.containsKey(itemCarrinho.idProduto)) {
+      _itensCarrinho.update(
+        itemCarrinho.idProduto,
+        (item) => ItemCarrinho(
+          id: itemCarrinho.id,
+          idProduto: itemCarrinho.idProduto,
+          produtoTitulo: itemCarrinho.produtoTitulo,
+          quantidade: itemCarrinho.quantidade + 1,
+          preco: itemCarrinho.preco,
+        ),
+      );
+    }
+    notifyListeners();
+  }
+
   void removendoItemCarrinho(String idProduto) {
     _itensCarrinho.remove(idProduto);
     notifyListeners();

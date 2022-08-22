@@ -21,7 +21,7 @@ class CardTotalCarrinho extends StatelessWidget {
             builder: (context, carrinho, child) => Chip(
               backgroundColor: Theme.of(context).colorScheme.primary,
               label: Text(
-                "R\$${carrinho.valorTotal}",
+                "R\$${carrinho.valorTotal.toStringAsFixed(2)}",
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onPrimary,
                 ),
