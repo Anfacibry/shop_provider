@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_provider/components/notificacao_carrinho.dart';
 import 'package:shop_provider/models/carrinho.dart';
+import 'package:shop_provider/utils/rotas_app.dart';
 
 import '../components/grid_de_produtos.dart';
 
@@ -49,6 +50,11 @@ class _TelaProdutosState extends State<TelaProdutos> {
           ),
           Consumer<Carrinho>(
             builder: (context, carrinho, child) => NotificacaoCarrinho(
+              fun: () {
+                Navigator.of(context).pushNamed(RotasApp.rotaTelaCarrinho);
+              },
+              top: 10,
+              right: 10,
               valor: carrinho.tamanhoCarrinho.toString(),
               child: const Padding(
                 padding: EdgeInsets.only(right: 15),
