@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_provider/components/notificacao_carrinho.dart';
 import 'package:shop_provider/models/carrinho.dart';
+import 'package:shop_provider/models/itens_carrinho.dart';
 import 'package:shop_provider/models/produtos.dart';
 
 import 'package:shop_provider/utils/rotas_app.dart';
 
 class ItemProdutos extends StatelessWidget {
-  const ItemProdutos({Key? key}) : super(key: key);
+  final int indice;
+  final String keyItemCarrinho;
+  const ItemProdutos({
+    Key? key,
+    required this.indice,
+    required this.keyItemCarrinho,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final Produtos produtos = Provider.of<Produtos>(context);
     final Carrinho carrinho = Provider.of<Carrinho>(context);
+    final Map<String, ItemCarrinho> itens = carrinho.itensCarrinho;
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -34,15 +43,31 @@ class ItemProdutos extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          trailing: IconButton(
-            onPressed: () {
+          trailing: NotificacaoCarrinho(
+            fun: () {
               carrinho.adicionandoItemCarrinho(produtos);
             },
-            icon: Icon(
-              Icons.shopping_cart,
-              color: Theme.of(context).colorScheme.secondary,
+            top: -6,
+            right: 10,
+            valor: itens.containsKey(keyItemCarrinho)
+                ? itens[keyItemCarrinho]!.quantidade.toString()
+                : "0",
+            corDeFundo: Theme.of(context).colorScheme.secondary,
+            child: const Padding(
+              padding: EdgeInsets.only(right: 15),
+              child: Icon(Icons.shopping_cart),
             ),
           ),
+
+          // trailing: IconButton(
+          //   onPressed: () {
+          //     carrinho.adicionandoItemCarrinho(produtos);
+          //   },
+          //   icon: Icon(
+          //     Icons.shopping_cart,
+          //     color: Theme.of(context).colorScheme.secondary,
+          //   ),
+          // ),
         ),
         child: InkWell(
           onTap: () {
