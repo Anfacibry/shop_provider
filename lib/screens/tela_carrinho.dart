@@ -21,28 +21,61 @@ class TelaCarrinho extends StatelessWidget {
         itemBuilder: (contextListItensCarrinho, indice) {
           return Padding(
             padding: const EdgeInsets.only(left: 5, right: 5),
-            child: Card(
-              elevation: 2,
-              child: ListTile(
-                leading: CircleAvatar(
-                  backgroundColor: Theme.of(context).colorScheme.primary,
-                  child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: FittedBox(
-                      child: Text(
-                        itens[indice].preco.toString(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onPrimary,
+            child: Dismissible(
+              key: ValueKey(itens[indice].id),
+              onDismissed: (_) {
+                carrinho.removendoItemCarrinho(itens[indice].idProduto);
+              },
+              child: Card(
+                elevation: 2,
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    child: Padding(
+                      padding: const EdgeInsets.all(5),
+                      child: FittedBox(
+                        child: Text(
+                          itens[indice].preco.toString(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
                         ),
                       ),
                     ),
                   ),
+                  title: Text(itens[indice].produtoTitulo),
+                  subtitle: Text(
+                      "Total: R\$${(itens[indice].preco * itens[indice].quantidade).toStringAsFixed(2)}"),
+                  trailing: SizedBox(
+                    width: 80,
+                    child: FittedBox(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                carrinho.excluindoItemCarrinho(itens[indice]);
+                              },
+                              icon: const Icon(Icons.remove)),
+                          Text(
+                            "${itens[indice].quantidade}X",
+                            style: const TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: () {
+                                carrinho.atualizandoQuantidadeItemCarrinho(
+                                    itemCarrinho: itens[indice]);
+                              },
+                              icon: const Icon(Icons.add)),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-                title: Text(itens[indice].produtoTitulo),
-                subtitle: Text(
-                    "Total: R\$${(itens[indice].preco * itens[indice].quantidade).toStringAsFixed(2)}"),
-                trailing: Text("${itens[indice].quantidade}X"),
               ),
             ),
           );
