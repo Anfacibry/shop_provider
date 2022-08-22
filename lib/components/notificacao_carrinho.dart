@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:shop_provider/utils/rotas_app.dart';
 
 class NotificacaoCarrinho extends StatelessWidget {
   final Widget child;
   final String valor;
   final Color? corDeFundo;
+  final void Function() fun;
+  final double top;
+  final double right;
   const NotificacaoCarrinho({
     Key? key,
+    required this.fun,
+    required this.top,
+    required this.right,
     required this.child,
     required this.valor,
     this.corDeFundo,
@@ -15,26 +20,30 @@ class NotificacaoCarrinho extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        Navigator.pushNamed(context, RotasApp.rotaTelaCarrinho);
-      },
+      onTap: fun,
       child: Stack(
         alignment: Alignment.center,
+        clipBehavior: Clip.none,
         children: [
           child,
           Positioned(
-            top: 10,
-            right: 10,
+            top: top,
+            right: right,
             child: CircleAvatar(
               backgroundColor:
                   corDeFundo ?? Theme.of(context).colorScheme.secondary,
               radius: 8,
-              child: Text(
-                textAlign: TextAlign.center,
-                valor,
-                style: TextStyle(
-                  fontSize: 15,
-                  color: Theme.of(context).colorScheme.onSecondary,
+              child: FittedBox(
+                child: Padding(
+                  padding: const EdgeInsets.all(2),
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    valor,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
                 ),
               ),
             ),
