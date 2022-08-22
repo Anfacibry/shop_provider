@@ -17,6 +17,7 @@ class GridDeProdutos extends StatelessWidget {
     final ListaProdutos provide = Provider.of<ListaProdutos>(context);
     final List<Produtos> produtos =
         selecaoFavorito ? provide.produtosFavoritos : provide.itensProdutos;
+
     return GridView.builder(
       padding: const EdgeInsets.all(10),
       itemCount: produtos.length,
@@ -28,7 +29,10 @@ class GridDeProdutos extends StatelessWidget {
       ),
       itemBuilder: (cxt, indice) => ChangeNotifierProvider.value(
         value: produtos[indice],
-        child: const ItemProdutos(),
+        child: ItemProdutos(
+          indice: indice,
+          keyItemCarrinho: produtos[indice].id,
+        ),
       ),
     );
   }
