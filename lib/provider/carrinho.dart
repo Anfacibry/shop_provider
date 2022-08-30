@@ -46,11 +46,11 @@ class Carrinho extends ChangeNotifier {
     notifyListeners();
   }
 
-  void excluindoItemCarrinho(ItemCarrinho itemCarrinho) {
-    if (_itensCarrinho.containsKey(itemCarrinho.idProduto)) {
-      if (itemCarrinho.quantidade > 1) {
+  void excluindoItemCarrinho(String idProduto) {
+    if (_itensCarrinho.containsKey(idProduto)) {
+      if (_itensCarrinho[idProduto]!.quantidade > 1) {
         _itensCarrinho.update(
-          itemCarrinho.idProduto,
+          idProduto,
           (itemCarrinhoPego) => ItemCarrinho(
             id: itemCarrinhoPego.id,
             idProduto: itemCarrinhoPego.idProduto,
@@ -60,7 +60,7 @@ class Carrinho extends ChangeNotifier {
           ),
         );
       } else {
-        _itensCarrinho.remove(itemCarrinho.idProduto);
+        _itensCarrinho.remove(idProduto);
       }
     }
     notifyListeners();
