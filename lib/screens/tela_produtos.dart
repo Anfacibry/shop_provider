@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_provider/components/drawer.dart';
 import 'package:shop_provider/components/notificacao_carrinho.dart';
-import 'package:shop_provider/models/carrinho.dart';
+import 'package:shop_provider/provider/carrinho.dart';
 import 'package:shop_provider/utils/rotas_app.dart';
 
 import '../components/grid_de_produtos.dart';
@@ -67,6 +68,7 @@ class _TelaProdutosState extends State<TelaProdutos> {
       body: GridDeProdutos(
         selecaoFavorito: _selecaoFavorito,
       ),
+      drawer: const IconeDrawer(),
     );
   }
 }
