@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_provider/components/card_total_carrinho.dart';
-import 'package:shop_provider/models/carrinho.dart';
+import 'package:shop_provider/provider/carrinho.dart';
 import 'package:shop_provider/models/itens_carrinho.dart';
 
 class TelaCarrinho extends StatelessWidget {
@@ -55,7 +55,8 @@ class TelaCarrinho extends StatelessWidget {
                         children: [
                           IconButton(
                               onPressed: () {
-                                carrinho.excluindoItemCarrinho(itens[indice]);
+                                carrinho.excluindoItemCarrinho(
+                                    itens[indice].idProduto);
                               },
                               icon: const Icon(Icons.remove)),
                           Text(
@@ -69,6 +70,22 @@ class TelaCarrinho extends StatelessWidget {
                               onPressed: () {
                                 carrinho.atualizandoQuantidadeItemCarrinho(
                                     itemCarrinho: itens[indice]);
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text(
+                                        "Produto adicionando com sucesso"),
+                                    duration: const Duration(seconds: 2),
+                                    action: SnackBarAction(
+                                      label: "DESFAZER",
+                                      onPressed: () {
+                                        carrinho.excluindoItemCarrinho(
+                                            itens[indice].idProduto);
+                                      },
+                                    ),
+                                  ),
+                                );
                               },
                               icon: const Icon(Icons.add)),
                         ],

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_provider/components/notificacao_carrinho.dart';
-import 'package:shop_provider/models/carrinho.dart';
+import 'package:shop_provider/provider/carrinho.dart';
 import 'package:shop_provider/models/itens_carrinho.dart';
 import 'package:shop_provider/models/produtos.dart';
 
@@ -46,6 +46,19 @@ class ItemProdutos extends StatelessWidget {
           trailing: NotificacaoCarrinho(
             fun: () {
               carrinho.adicionandoItemCarrinho(produtos);
+              ScaffoldMessenger.of(context).hideCurrentSnackBar();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: const Text("Produto adicionando com sucesso"),
+                  duration: const Duration(seconds: 1),
+                  action: SnackBarAction(
+                    label: "DESFAZER",
+                    onPressed: () {
+                      carrinho.excluindoItemCarrinho(keyItemCarrinho);
+                    },
+                  ),
+                ),
+              );
             },
             top: -6,
             right: 10,
@@ -58,16 +71,6 @@ class ItemProdutos extends StatelessWidget {
               child: Icon(Icons.shopping_cart),
             ),
           ),
-
-          // trailing: IconButton(
-          //   onPressed: () {
-          //     carrinho.adicionandoItemCarrinho(produtos);
-          //   },
-          //   icon: Icon(
-          //     Icons.shopping_cart,
-          //     color: Theme.of(context).colorScheme.secondary,
-          //   ),
-          // ),
         ),
         child: InkWell(
           onTap: () {
