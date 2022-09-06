@@ -22,6 +22,7 @@ class IconeDrawer extends StatelessWidget {
                   .pushReplacementNamed(RotasApp.rotaPrincipal);
             },
           ),
+          const Divider(),
           ListTile(
             leading: const Icon(Icons.payment),
             title: const Text("Pedidos"),
@@ -30,6 +31,17 @@ class IconeDrawer extends StatelessWidget {
                   .pushReplacementNamed(RotasApp.rotaTelaListaOrdem);
             },
           ),
+          const Divider(
+            height: 3,
+          ),
+          ListTile(
+            leading: const Icon(Icons.edit),
+            title: const Text("Gerencia de produtos"),
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed(RotasApp.rotaProdutos);
+            },
+          ),
+          const Divider(),
         ],
       ),
     );

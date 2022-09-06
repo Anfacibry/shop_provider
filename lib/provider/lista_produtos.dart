@@ -5,6 +5,7 @@ import 'package:shop_provider/models/produtos.dart';
 class ListaProdutos extends ChangeNotifier {
   final List<Produtos> _itensProdutos = DadosDeProdutos().dadosProdutos;
   List<Produtos> get itensProdutos => [..._itensProdutos];
+  int get tamanhoListProdutos => _itensProdutos.length;
   List<Produtos> get produtosFavoritos =>
       _itensProdutos.where((element) => element.eFavorito).toList();
 

@@ -1,74 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_provider/components/drawer.dart';
-import 'package:shop_provider/components/notificacao_carrinho.dart';
-import 'package:shop_provider/provider/carrinho.dart';
+import 'package:shop_provider/components/itens_lista_produtos.dart';
+import 'package:shop_provider/provider/lista_produtos.dart';
 import 'package:shop_provider/utils/rotas_app.dart';
 
-import '../components/grid_de_produtos.dart';
-
-enum FiltrandoOpcao {
-  favoritos,
-  todos,
-}
-
-class TelaProdutos extends StatefulWidget {
+class TelaProdutos extends StatelessWidget {
   const TelaProdutos({Key? key}) : super(key: key);
 
   @override
-  State<TelaProdutos> createState() => _TelaProdutosState();
-}
-
-class _TelaProdutosState extends State<TelaProdutos> {
-  bool _selecaoFavorito = false;
-  @override
   Widget build(BuildContext context) {
+    final ListaProdutos produtos = Provider.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Produtos"),
+        title: const Text("Gerencia de produtos"),
         centerTitle: true,
         actions: [
-          PopupMenuButton(
-            itemBuilder: (contextPop) => [
-              const PopupMenuItem(
-                value: FiltrandoOpcao.favoritos,
-                child: Text("Favoritos"),
-              ),
-              const PopupMenuItem(
-                value: FiltrandoOpcao.todos,
-                child: Text("Todos"),
-              ),
-            ],
-            onSelected: (selecao) {
-              setState(() {
-                if (selecao == FiltrandoOpcao.favoritos) {
-                  _selecaoFavorito = true;
-                } else {
-                  _selecaoFavorito = false;
-                }
-              });
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(RotasApp.rotaFormulario);
             },
-          ),
-          Consumer<Carrinho>(
-            builder: (context, carrinho, child) => NotificacaoCarrinho(
-              fun: () {
-                Navigator.of(context).pushNamed(RotasApp.rotaTelaCarrinho);
-              },
-              top: 10,
-              right: 10,
-              valor: carrinho.tamanhoCarrinho.toString(),
-              child: const Padding(
-                padding: EdgeInsets.only(right: 15),
-                child: Icon(Icons.shopping_cart),
-              ),
-            ),
+            icon: const Icon(Icons.add),
           ),
         ],
       ),
-      body: GridDeProdutos(
-        selecaoFavorito: _selecaoFavorito,
-      ),
       drawer: const IconeDrawer(),
+      body: ListView.builder(
+        itemCount: produtos.tamanhoListProdutos,
+        itemBuilder: (contxtTelaProdutos, indice) => Column(
+          children: [
+            ItensListaProdutos(
+              produtos: produtos.itensProdutos[indice],
+            ),
+            const Divider(
+              height: 1,
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -4,9 +4,14 @@ import 'package:shop_provider/components/card_total_carrinho.dart';
 import 'package:shop_provider/provider/carrinho.dart';
 import 'package:shop_provider/models/itens_carrinho.dart';
 
-class TelaCarrinho extends StatelessWidget {
+class TelaCarrinho extends StatefulWidget {
   const TelaCarrinho({Key? key}) : super(key: key);
 
+  @override
+  State<TelaCarrinho> createState() => _TelaCarrinhoState();
+}
+
+class _TelaCarrinhoState extends State<TelaCarrinho> {
   @override
   Widget build(BuildContext context) {
     final Carrinho carrinho = Provider.of(context);
@@ -26,6 +31,29 @@ class TelaCarrinho extends StatelessWidget {
               onDismissed: (_) {
                 carrinho.removendoItemCarrinho(itens[indice].idProduto);
               },
+              confirmDismiss: (direction) => showDialog<bool>(
+                  context: context,
+                  builder: (contDialog) {
+                    return AlertDialog(
+                      title: const Text("Excluindo item do carrinho"),
+                      content: const Text(
+                          "Tem certeza que deseja excluir este item do carriho?"),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(false);
+                          },
+                          child: const Text("Não"),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(true);
+                          },
+                          child: const Text("Sim"),
+                        ),
+                      ],
+                    );
+                  }),
               child: Card(
                 elevation: 2,
                 child: ListTile(
