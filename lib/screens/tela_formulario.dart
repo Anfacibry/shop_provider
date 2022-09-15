@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:shop_provider/models/produtos.dart';
 
 class TelaFormulario extends StatefulWidget {
   const TelaFormulario({Key? key}) : super(key: key);
@@ -14,8 +17,35 @@ class _TelaFormularioState extends State<TelaFormulario> {
 
   final TextEditingController _urlController = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+  final Map<String, dynamic> _dadosForm = {};
+
   void atualizandoUrl() {
     setState(() {});
+  }
+
+  bool validImagem(String url) {
+    bool eValidaUrl = Uri.tryParse(url)?.hasAbsolutePath ?? false;
+    bool contemFormatImage = url.toLowerCase().endsWith(".png") ||
+        url.toLowerCase().endsWith(".jpg") ||
+        url.toLowerCase().endsWith(".jpeg");
+    return eValidaUrl && contemFormatImage;
+  }
+
+  void _formSubmetido() {
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState?.save();
+      final Produtos novoProduto = Produtos(
+          id: Random().nextDouble().toString(),
+          titulo: _dadosForm["nome"],
+          descricao: _dadosForm["descricao"],
+          preco: _dadosForm["preco"],
+          imagemUrl: _dadosForm["url"]);
+      debugPrint(novoProduto.id);
+      debugPrint(novoProduto.titulo);
+      debugPrint(novoProduto.preco.toString());
+      debugPrint(novoProduto.descricao);
+    }
   }
 
   @override
@@ -39,10 +69,17 @@ class _TelaFormularioState extends State<TelaFormulario> {
       appBar: AppBar(
         title: const Text("Formulario de cadastro"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: _formSubmetido,
+            icon: const Icon(Icons.save),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(10),
         child: Form(
+          key: _formKey,
           child: ListView(
             children: [
               TextFormField(
@@ -53,6 +90,19 @@ class _TelaFormularioState extends State<TelaFormulario> {
                 onFieldSubmitted: (valorString) {
                   FocusScope.of(context).requestFocus(_focusNode);
                 },
+                onSaved: (nomePego) {
+                  _dadosForm["nome"] = nomePego ?? "";
+                },
+                validator: (String? nomePego) {
+                  final nome = nomePego ?? "";
+                  if (nome.trim().isEmpty) {
+                    return "Digite um nome";
+                  }
+                  if (nome.length < 3) {
+                    return "Digite um nome com mais de 3 caracteres";
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 decoration: const InputDecoration(
@@ -60,6 +110,17 @@ class _TelaFormularioState extends State<TelaFormulario> {
                 ),
                 onFieldSubmitted: (valorString) {
                   FocusScope.of(context).requestFocus(_descricaoNode);
+                },
+                onSaved: (precoPego) {
+                  _dadosForm["preco"] = double.parse(precoPego!);
+                },
+                validator: (precoPego) {
+                  final preco = precoPego ?? "";
+                  final precoConvert = double.tryParse(preco) ?? -1;
+                  if (precoConvert <= 0) {
+                    return "Digite um valor válido";
+                  }
+                  return null;
                 },
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.number,
@@ -71,6 +132,19 @@ class _TelaFormularioState extends State<TelaFormulario> {
                 ),
                 onFieldSubmitted: (valorString) {
                   FocusScope.of(context).requestFocus(_urlNode);
+                },
+                onSaved: (descricaoPego) {
+                  _dadosForm["descricao"] = descricaoPego ?? "";
+                },
+                validator: (String? descricaoPego) {
+                  final descricao = descricaoPego ?? "";
+                  if (descricao.trim().isEmpty) {
+                    return "Digite um descricao";
+                  }
+                  if (descricao.length < 10) {
+                    return "Digite um descricao com mais de 10 caracteres";
+                  }
+                  return null;
                 },
                 textInputAction: TextInputAction.next,
                 keyboardType: TextInputType.multiline,
@@ -85,6 +159,16 @@ class _TelaFormularioState extends State<TelaFormulario> {
                       decoration: const InputDecoration(
                         labelText: "Url",
                       ),
+                      onSaved: (urlPego) {
+                        _dadosForm["url"] = urlPego ?? "";
+                      },
+                      validator: (urlPega) {
+                        final url = urlPega ?? "";
+                        if (!validImagem(url)) {
+                          return "Retorna uma URL válida";
+                        }
+                        return null;
+                      },
                       controller: _urlController,
                       textInputAction: TextInputAction.done,
                       keyboardType: TextInputType.url,
