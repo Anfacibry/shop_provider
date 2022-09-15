@@ -6,7 +6,7 @@ import 'package:shop_provider/provider/lista_produtos.dart';
 import 'package:shop_provider/screens/tela_carrinho.dart';
 import 'package:shop_provider/screens/tela_detalhes_produtos.dart';
 import 'package:shop_provider/screens/tela_formulario.dart';
-import 'package:shop_provider/screens/tela_ordens.dart';
+import 'package:shop_provider/screens/tela_meus_pedidos.dart';
 import 'package:shop_provider/screens/tela_grid_produtos.dart';
 import 'package:shop_provider/screens/tela_produtos.dart';
 import 'package:shop_provider/utils/rotas_app.dart';
@@ -48,7 +48,7 @@ class ShopProvider extends StatelessWidget {
         RotasApp.rotaPrincipal: (context) => const TelaGridProdutos(),
         RotasApp.rotaDetalhesProdutos: (context) => const DetalhesProdutos(),
         RotasApp.rotaTelaCarrinho: (context) => const TelaCarrinho(),
-        RotasApp.rotaTelaListaOrdem: (context) => const TelaOrdens(),
+        RotasApp.rotaTelaMeusPedidos: (context) => const MeusPedidos(),
         RotasApp.rotaProdutos: (context) => const TelaProdutos(),
         RotasApp.rotaFormulario: (context) => const TelaFormulario(),
       },
