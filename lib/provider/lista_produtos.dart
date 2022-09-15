@@ -10,7 +10,7 @@ class ListaProdutos extends ChangeNotifier {
       _itensProdutos.where((element) => element.eFavorito).toList();
 
   void adicionandoProduto(Produtos produto) {
-    itensProdutos.add(produto);
+    _itensProdutos.add(produto);
     notifyListeners();
   }
 }
