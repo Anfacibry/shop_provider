@@ -28,7 +28,7 @@ class IconeDrawer extends StatelessWidget {
             title: const Text("Pedidos"),
             onTap: () {
               Navigator.of(context)
-                  .pushReplacementNamed(RotasApp.rotaTelaListaOrdem);
+                  .pushReplacementNamed(RotasApp.rotaTelaMeusPedidos);
             },
           ),
           const Divider(

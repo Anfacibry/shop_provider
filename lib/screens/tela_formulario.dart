@@ -1,7 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop_provider/models/produtos.dart';
+import 'package:shop_provider/provider/lista_produtos.dart';
 
 class TelaFormulario extends StatefulWidget {
   const TelaFormulario({Key? key}) : super(key: key);
@@ -41,10 +43,11 @@ class _TelaFormularioState extends State<TelaFormulario> {
           descricao: _dadosForm["descricao"],
           preco: _dadosForm["preco"],
           imagemUrl: _dadosForm["url"]);
-      debugPrint(novoProduto.id);
-      debugPrint(novoProduto.titulo);
-      debugPrint(novoProduto.preco.toString());
-      debugPrint(novoProduto.descricao);
+      Provider.of<ListaProdutos>(
+        context,
+        listen: false,
+      ).adicionandoProduto(novoProduto);
+      Navigator.of(context).pop();
     }
   }
 
