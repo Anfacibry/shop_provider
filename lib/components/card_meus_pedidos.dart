@@ -18,7 +18,9 @@ class _CardMeusPedidosState extends State<CardMeusPedidos> {
       child: Column(
         children: [
           ListTile(
-            title: Text(widget.ordem.total.toStringAsFixed(2)),
+            title: Text(
+              "Valor total: ${widget.ordem.total.toStringAsFixed(2)}",
+            ),
             subtitle: Text(
               DateFormat("dd/MM/yyyy hh:mm").format(widget.ordem.data),
             ),
@@ -37,8 +39,8 @@ class _CardMeusPedidosState extends State<CardMeusPedidos> {
                 vertical: 4,
                 horizontal: 15,
               ),
-              height: (widget.ordem.produtos.length * 25.0) + 10,
-              child: ListView(
+              height: (widget.ordem.produtos.length * 22) + 10,
+              child: Column(
                 children: widget.ordem.produtos
                     .map(
                       (itemCarrinho) => Row(

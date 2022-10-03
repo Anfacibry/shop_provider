@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_provider/models/produtos.dart';
+
 import 'package:shop_provider/provider/lista_produtos.dart';
 
 class TelaFormulario extends StatefulWidget {
@@ -21,6 +20,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
 
   final _formKey = GlobalKey<FormState>();
   final Map<String, dynamic> _dadosForm = {};
+  bool _carregando = false;
 
   void atualizandoUrl() {
     setState(() {});
@@ -37,17 +37,20 @@ class _TelaFormularioState extends State<TelaFormulario> {
   void _formSubmetido() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
-      final Produtos novoProduto = Produtos(
-          id: Random().nextDouble().toString(),
-          titulo: _dadosForm["nome"],
-          descricao: _dadosForm["descricao"],
-          preco: _dadosForm["preco"],
-          imagemUrl: _dadosForm["url"]);
+
+      setState(() {
+        _carregando = true;
+      });
+
       Provider.of<ListaProdutos>(
         context,
         listen: false,
-      ).adicionandoProduto(novoProduto);
-      Navigator.of(context).pop();
+      ).addProdutoFormulario(_dadosForm).then((value) {
+        setState(() {
+          _carregando = false;
+        });
+        Navigator.of(context).pop();
+      });
     }
   }
 
@@ -55,6 +58,23 @@ class _TelaFormularioState extends State<TelaFormulario> {
   void initState() {
     super.initState();
     _urlNode.addListener(atualizandoUrl);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_dadosForm.isEmpty) {
+      final arg = ModalRoute.of(context)?.settings.arguments;
+      if (arg != null) {
+        final Produtos produtos = arg as Produtos;
+        _dadosForm["id"] = produtos.id;
+        _dadosForm["titulo"] = produtos.titulo;
+        _dadosForm["preco"] = produtos.preco;
+        _dadosForm["descricao"] = produtos.descricao;
+        _dadosForm["imagemUrl"] = produtos.imagemUrl;
+        _urlController.text = produtos.imagemUrl;
+      }
+    }
   }
 
   @override
@@ -79,136 +99,143 @@ class _TelaFormularioState extends State<TelaFormulario> {
           )
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: "Nome",
-                ),
-                textInputAction: TextInputAction.next,
-                onFieldSubmitted: (valorString) {
-                  FocusScope.of(context).requestFocus(_focusNode);
-                },
-                onSaved: (nomePego) {
-                  _dadosForm["nome"] = nomePego ?? "";
-                },
-                validator: (String? nomePego) {
-                  final nome = nomePego ?? "";
-                  if (nome.trim().isEmpty) {
-                    return "Digite um nome";
-                  }
-                  if (nome.length < 3) {
-                    return "Digite um nome com mais de 3 caracteres";
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: "Preço",
-                ),
-                onFieldSubmitted: (valorString) {
-                  FocusScope.of(context).requestFocus(_descricaoNode);
-                },
-                onSaved: (precoPego) {
-                  _dadosForm["preco"] = double.parse(precoPego!);
-                },
-                validator: (precoPego) {
-                  final preco = precoPego ?? "";
-                  final precoConvert = double.tryParse(preco) ?? -1;
-                  if (precoConvert <= 0) {
-                    return "Digite um valor válido";
-                  }
-                  return null;
-                },
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.number,
-                focusNode: _focusNode,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: "Descrição",
-                ),
-                onFieldSubmitted: (valorString) {
-                  FocusScope.of(context).requestFocus(_urlNode);
-                },
-                onSaved: (descricaoPego) {
-                  _dadosForm["descricao"] = descricaoPego ?? "";
-                },
-                validator: (String? descricaoPego) {
-                  final descricao = descricaoPego ?? "";
-                  if (descricao.trim().isEmpty) {
-                    return "Digite um descricao";
-                  }
-                  if (descricao.length < 10) {
-                    return "Digite um descricao com mais de 10 caracteres";
-                  }
-                  return null;
-                },
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.multiline,
-                focusNode: _descricaoNode,
-                maxLines: 3,
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: TextFormField(
+      body: _carregando
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(10),
+              child: Form(
+                key: _formKey,
+                child: ListView(
+                  children: [
+                    TextFormField(
+                      initialValue: _dadosForm["titulo"],
                       decoration: const InputDecoration(
-                        labelText: "Url",
+                        labelText: "Nome",
                       ),
-                      onSaved: (urlPego) {
-                        _dadosForm["url"] = urlPego ?? "";
+                      textInputAction: TextInputAction.next,
+                      onFieldSubmitted: (valorString) {
+                        FocusScope.of(context).requestFocus(_focusNode);
                       },
-                      validator: (urlPega) {
-                        final url = urlPega ?? "";
-                        if (!validImagem(url)) {
-                          return "Retorna uma URL válida";
+                      onSaved: (nomePego) {
+                        _dadosForm["titulo"] = nomePego ?? "";
+                      },
+                      validator: (String? nomePego) {
+                        final nome = nomePego ?? "";
+                        if (nome.trim().isEmpty) {
+                          return "Digite um nome";
+                        }
+                        if (nome.length < 3) {
+                          return "Digite um nome com mais de 3 caracteres";
                         }
                         return null;
                       },
-                      controller: _urlController,
-                      textInputAction: TextInputAction.done,
-                      keyboardType: TextInputType.url,
-                      focusNode: _urlNode,
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10, left: 10),
-                    child: Container(
-                      height: 100,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.primary,
-                          width: 5,
-                        ),
+                    TextFormField(
+                      initialValue: _dadosForm["preco"]?.toString(),
+                      decoration: const InputDecoration(
+                        labelText: "Preço",
                       ),
-                      alignment: Alignment.center,
-                      child: _urlController.text.isEmpty
-                          ? const Text("Vazio")
-                          : SizedBox(
-                              height: 100,
-                              width: 100,
-                              child: Image.network(
-                                _urlController.text,
-                                fit: BoxFit.cover,
+                      onFieldSubmitted: (valorString) {
+                        FocusScope.of(context).requestFocus(_descricaoNode);
+                      },
+                      onSaved: (precoPego) {
+                        _dadosForm["preco"] = double.parse(precoPego!);
+                      },
+                      validator: (precoPego) {
+                        final preco = precoPego ?? "";
+                        final precoConvert = double.tryParse(preco) ?? -1;
+                        if (precoConvert <= 0) {
+                          return "Digite um valor válido";
+                        }
+                        return null;
+                      },
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      focusNode: _focusNode,
+                    ),
+                    TextFormField(
+                      initialValue: _dadosForm["descricao"],
+                      decoration: const InputDecoration(
+                        labelText: "Descrição",
+                      ),
+                      onFieldSubmitted: (valorString) {
+                        FocusScope.of(context).requestFocus(_urlNode);
+                      },
+                      onSaved: (descricaoPego) {
+                        _dadosForm["descricao"] = descricaoPego ?? "";
+                      },
+                      validator: (String? descricaoPego) {
+                        final descricao = descricaoPego ?? "";
+                        if (descricao.trim().isEmpty) {
+                          return "Digite um descricao";
+                        }
+                        if (descricao.length < 10) {
+                          return "Digite um descricao com mais de 10 caracteres";
+                        }
+                        return null;
+                      },
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.multiline,
+                      focusNode: _descricaoNode,
+                      maxLines: 3,
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            decoration: const InputDecoration(
+                              labelText: "Url",
+                            ),
+                            onSaved: (urlPego) {
+                              _dadosForm["imagemUrl"] = urlPego ?? "";
+                            },
+                            validator: (urlPega) {
+                              final url = urlPega ?? "";
+                              if (!validImagem(url)) {
+                                return "Retorna uma URL válida";
+                              }
+                              return null;
+                            },
+                            controller: _urlController,
+                            textInputAction: TextInputAction.done,
+                            keyboardType: TextInputType.url,
+                            focusNode: _urlNode,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10, left: 10),
+                          child: Container(
+                            height: 100,
+                            width: 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 5,
                               ),
                             ),
-                    ),
-                  )
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
+                            alignment: Alignment.center,
+                            child: _urlController.text.isEmpty
+                                ? const Text("Vazio")
+                                : SizedBox(
+                                    height: 100,
+                                    width: 100,
+                                    child: Image.network(
+                                      _urlController.text,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }
