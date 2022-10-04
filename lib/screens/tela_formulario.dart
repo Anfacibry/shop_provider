@@ -34,23 +34,45 @@ class _TelaFormularioState extends State<TelaFormulario> {
     return eValidaUrl && contemFormatImage;
   }
 
-  void _formSubmetido() {
+  retorno() {
+    Navigator.of(context).pop();
+  }
+
+  Future<void> _formSubmetido() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
 
       setState(() {
         _carregando = true;
       });
-
-      Provider.of<ListaProdutos>(
-        context,
-        listen: false,
-      ).addProdutoFormulario(_dadosForm).then((value) {
+      try {
+        await Provider.of<ListaProdutos>(
+          context,
+          listen: false,
+        ).addProdutoFormulario(_dadosForm);
+        retorno();
+      } catch (erro) {
+        await showDialog(
+            context: context,
+            builder: (cont) {
+              return AlertDialog(
+                title: const Text("Erro ao salvar"),
+                content: const Text(
+                    "Erro ao salvar a imagem, verifique a url inserida para adicionar a imagem e tente novamente"),
+                actions: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: const Text("Ok")),
+                ],
+              );
+            });
+      } finally {
         setState(() {
           _carregando = false;
         });
-        Navigator.of(context).pop();
-      });
+      }
     }
   }
 
@@ -58,6 +80,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
   void initState() {
     super.initState();
     _urlNode.addListener(atualizandoUrl);
+    _formSubmetido();
   }
 
   @override
@@ -83,6 +106,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
     _focusNode.dispose();
     _descricaoNode.dispose();
     _urlNode.removeListener(atualizandoUrl);
+    _formSubmetido();
     _urlNode.dispose();
   }
 
