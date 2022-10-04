@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop_provider/components/drawer.dart';
 import 'package:shop_provider/components/notificacao_carrinho.dart';
 import 'package:shop_provider/provider/carrinho.dart';
+import 'package:shop_provider/provider/lista_produtos.dart';
 import 'package:shop_provider/utils/rotas_app.dart';
 
 import '../components/grid_de_produtos.dart';
@@ -21,6 +22,21 @@ class TelaGridProdutos extends StatefulWidget {
 
 class _TelaGridProdutosState extends State<TelaGridProdutos> {
   bool _selecaoFavorito = false;
+  bool _carregando = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ListaProdutos>(
+      context,
+      listen: false,
+    ).pegandoDados().then((carregando) {
+      setState(() {
+        _carregando = false;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,9 +81,13 @@ class _TelaGridProdutosState extends State<TelaGridProdutos> {
           ),
         ],
       ),
-      body: GridDeProdutos(
-        selecaoFavorito: _selecaoFavorito,
-      ),
+      body: _carregando
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : GridDeProdutos(
+              selecaoFavorito: _selecaoFavorito,
+            ),
       drawer: const IconeDrawer(),
     );
   }
