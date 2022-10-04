@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:shop_provider/data/dados_produtos.dart';
+// import 'package:shop_provider/data/dados_produtos.dart';
 import 'package:shop_provider/models/produtos.dart';
 import "package:http/http.dart" as http;
 
 class ListaProdutos extends ChangeNotifier {
-  final String _url = "https://shop-provider-949c2-default-rtdb.firebaseio.com";
-  final List<Produtos> _itensProdutos = DadosDeProdutos().dadosProdutos;
+  final String _url =
+      "https://shop-provider-949c2-default-rtdb.firebaseio.com/produtos.json";
+  final List<Produtos> _itensProdutos = [];
   List<Produtos> get itensProdutos => [..._itensProdutos];
   int get tamanhoListProdutos => _itensProdutos.length;
   List<Produtos> get produtosFavoritos =>
@@ -30,34 +31,50 @@ class ListaProdutos extends ChangeNotifier {
     }
   }
 
-  Future<void> adicionandoProduto(Produtos produto) {
-    ///Comando para fazer inserção de dados no servidor
-    return http
-        .post(Uri.parse("$_url/produtos.json"),
-            body: jsonEncode(
-              {
-                "titulo": produto.titulo,
-                "descricao": produto.descricao,
-                "preco": produto.preco,
-                "imagemUrl": produto.imagemUrl,
-                "eFavorito": produto.eFavorito,
-              },
-            ))
-        .then((respnse) {
-      final String id = jsonDecode(respnse.body)["name"];
-
+  Future<void> pegandoDados() async {
+    _itensProdutos.clear();
+    final response = await http.get(Uri.parse(_url));
+    Map<String, dynamic> produtos = jsonDecode(response.body);
+    produtos.forEach((key, value) {
       _itensProdutos.add(
         Produtos(
-          id: id,
-          titulo: produto.titulo,
-          descricao: produto.descricao,
-          preco: produto.preco,
-          imagemUrl: produto.imagemUrl,
-          eFavorito: produto.eFavorito,
+          id: key,
+          titulo: value["titulo"],
+          descricao: value["descricao"],
+          preco: value["preco"],
+          imagemUrl: value["imagemUrl"],
+          eFavorito: value["eFavorito"],
         ),
       );
-      notifyListeners();
     });
+    notifyListeners();
+  }
+
+  Future<void> adicionandoProduto(Produtos produto) async {
+    ///Comando para fazer inserção de dados no servidor
+    final response = await http.post(Uri.parse(_url),
+        body: jsonEncode(
+          {
+            "titulo": produto.titulo,
+            "descricao": produto.descricao,
+            "preco": produto.preco,
+            "imagemUrl": produto.imagemUrl,
+            "eFavorito": produto.eFavorito,
+          },
+        ));
+    final String id = jsonDecode(response.body)["name"];
+
+    _itensProdutos.add(
+      Produtos(
+        id: id,
+        titulo: produto.titulo,
+        descricao: produto.descricao,
+        preco: produto.preco,
+        imagemUrl: produto.imagemUrl,
+        eFavorito: produto.eFavorito,
+      ),
+    );
+    notifyListeners();
   }
 
   Future<void> atualizandoProduto(Produtos produto) {
