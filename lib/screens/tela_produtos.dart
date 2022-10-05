@@ -8,6 +8,13 @@ import 'package:shop_provider/utils/rotas_app.dart';
 class TelaProdutos extends StatelessWidget {
   const TelaProdutos({Key? key}) : super(key: key);
 
+  Future<void> carregandoProduto(BuildContext context) async {
+    return await Provider.of<ListaProdutos>(
+      context,
+      listen: false,
+    ).pegandoDados();
+  }
+
   @override
   Widget build(BuildContext context) {
     final ListaProdutos produtos = Provider.of(context);
@@ -25,17 +32,20 @@ class TelaProdutos extends StatelessWidget {
         ],
       ),
       drawer: const IconeDrawer(),
-      body: ListView.builder(
-        itemCount: produtos.tamanhoListProdutos,
-        itemBuilder: (contxtTelaProdutos, indice) => Column(
-          children: [
-            ItensListaProdutos(
-              produtos: produtos.itensProdutos[indice],
-            ),
-            const Divider(
-              height: 1,
-            ),
-          ],
+      body: RefreshIndicator(
+        onRefresh: () => carregandoProduto(context),
+        child: ListView.builder(
+          itemCount: produtos.tamanhoListProdutos,
+          itemBuilder: (contxtTelaProdutos, indice) => Column(
+            children: [
+              ItensListaProdutos(
+                produtos: produtos.itensProdutos[indice],
+              ),
+              const Divider(
+                height: 1,
+              ),
+            ],
+          ),
         ),
       ),
     );
