@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_provider/exceptions/http_exceptions.dart';
 import 'package:shop_provider/models/produtos.dart';
 import 'package:shop_provider/provider/lista_produtos.dart';
 import 'package:shop_provider/utils/rotas_app.dart';
@@ -13,6 +14,7 @@ class ItensListaProdutos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ScaffoldMessengerState mensagem = ScaffoldMessenger.of(context);
     return ListTile(
       title: Text(produtos.titulo),
       leading: CircleAvatar(
@@ -57,12 +59,23 @@ class ItensListaProdutos extends StatelessWidget {
                             child: const Text("Não"),
                           ),
                           TextButton(
-                            onPressed: () {
-                              Provider.of<ListaProdutos>(
-                                context,
-                                listen: false,
-                              ).removendoProduto(produtos);
+                            onPressed: () async {
                               Navigator.of(context).pop();
+                              try {
+                                await Provider.of<ListaProdutos>(
+                                  context,
+                                  listen: false,
+                                ).removendoProduto(produtos);
+                              } on HttpExceptions catch (erro) {
+                                mensagem.showSnackBar(
+                                  SnackBar(
+                                    duration: const Duration(seconds: 2),
+                                    content: Text(
+                                      erro.toString(),
+                                    ),
+                                  ),
+                                );
+                              }
                             },
                             child: const Text("Sim"),
                           ),

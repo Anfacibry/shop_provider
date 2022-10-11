@@ -31,16 +31,47 @@ class CardTotalCarrinho extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          ElevatedButton(
-            onPressed: () {
-              Provider.of<ListaOrdenada>(context, listen: false)
-                  .addOrdem(carrinho);
-              carrinho.limparCarrinho();
-            },
-            child: const Text("Comprar"),
-          ),
+          BotaoCarrinho(carrinho: carrinho),
         ],
       ),
     );
+  }
+}
+
+class BotaoCarrinho extends StatefulWidget {
+  const BotaoCarrinho({
+    Key? key,
+    required this.carrinho,
+  }) : super(key: key);
+
+  final Carrinho carrinho;
+
+  @override
+  State<BotaoCarrinho> createState() => _BotaoCarrinhoState();
+}
+
+bool _carregando = false;
+
+class _BotaoCarrinhoState extends State<BotaoCarrinho> {
+  @override
+  Widget build(BuildContext context) {
+    return _carregando
+        ? const CircularProgressIndicator()
+        : ElevatedButton(
+            onPressed: widget.carrinho.tamanhoCarrinho == 0
+                ? null
+                : () async {
+                    setState(() {
+                      _carregando = true;
+                    });
+                    await Provider.of<ListaOrdenada>(context, listen: false)
+                        .addOrdem(widget.carrinho);
+                    widget.carrinho.limparCarrinho();
+                    setState(() {
+                      _carregando = false;
+                    });
+                  },
+            child: const Text("Comprar"),
+          );
   }
 }
