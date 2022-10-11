@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
+import "package:http/http.dart" as http;
 
 class Produtos extends ChangeNotifier {
   final String id;
@@ -17,8 +20,15 @@ class Produtos extends ChangeNotifier {
     this.eFavorito = false,
   });
 
-  void verificacaoFavorito() {
+  final String _urlProdutos =
+      "https://shop-provider-949c2-default-rtdb.firebaseio.com/produtos";
+
+  Future<void> verificacaoFavorito() async {
     eFavorito = !eFavorito;
+    await http.patch(Uri.parse("$_urlProdutos/$id.json"),
+        body: jsonEncode({
+          "eFavorito": eFavorito,
+        }));
     notifyListeners();
   }
 }
