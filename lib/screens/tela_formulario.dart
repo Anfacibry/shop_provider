@@ -34,10 +34,6 @@ class _TelaFormularioState extends State<TelaFormulario> {
     return eValidaUrl && contemFormatImage;
   }
 
-  retorno() {
-    Navigator.of(context).pop();
-  }
-
   Future<void> _formSubmetido() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState?.save();
@@ -49,8 +45,9 @@ class _TelaFormularioState extends State<TelaFormulario> {
         await Provider.of<ListaProdutos>(
           context,
           listen: false,
-        ).addProdutoFormulario(_dadosForm);
-        retorno();
+        ).addProdutoFormulario(_dadosForm).then(
+              (value) => Navigator.of(context).pop(),
+            );
       } catch (erro) {
         await showDialog(
             context: context,
@@ -80,7 +77,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
   void initState() {
     super.initState();
     _urlNode.addListener(atualizandoUrl);
-    _formSubmetido();
+    // _formSubmetido();
   }
 
   @override
@@ -106,7 +103,7 @@ class _TelaFormularioState extends State<TelaFormulario> {
     _focusNode.dispose();
     _descricaoNode.dispose();
     _urlNode.removeListener(atualizandoUrl);
-    _formSubmetido();
+    // _formSubmetido();
     _urlNode.dispose();
   }
 
