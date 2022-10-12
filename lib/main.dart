@@ -6,6 +6,7 @@ import 'package:shop_provider/provider/lista_produtos.dart';
 import 'package:shop_provider/screens/tela_carrinho.dart';
 import 'package:shop_provider/screens/tela_detalhes_produtos.dart';
 import 'package:shop_provider/screens/tela_formulario.dart';
+import 'package:shop_provider/screens/tela_login.dart';
 import 'package:shop_provider/screens/tela_meus_pedidos.dart';
 import 'package:shop_provider/screens/tela_grid_produtos.dart';
 import 'package:shop_provider/screens/tela_produtos.dart';
@@ -43,8 +44,9 @@ class ShopProvider extends StatelessWidget {
           accentColor: Colors.pink[100],
         ),
       ),
-      initialRoute: RotasApp.rotaPrincipal,
+      initialRoute: RotasApp.rotaLogin,
       routes: {
+        RotasApp.rotaLogin: (context) => const TelaLogin(),
         RotasApp.rotaPrincipal: (context) => const TelaGridProdutos(),
         RotasApp.rotaDetalhesProdutos: (context) => const DetalhesProdutos(),
         RotasApp.rotaTelaCarrinho: (context) => const TelaCarrinho(),
