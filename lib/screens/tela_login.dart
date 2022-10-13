@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:shop_provider/components/aut_form_login.dart';
 
 class TelaLogin extends StatelessWidget {
   const TelaLogin({super.key});
@@ -51,6 +52,8 @@ class TelaLogin extends StatelessWidget {
                     ),
                   ),
                 ),
+                const Padding(padding: EdgeInsets.only(bottom: 20)),
+                const AutFormLogin(),
               ],
             ),
           ),
