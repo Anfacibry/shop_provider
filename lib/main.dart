@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_provider/provider/autenticacao.dart';
 import 'package:shop_provider/provider/carrinho.dart';
 import 'package:shop_provider/provider/lista_ordenada.dart';
 import 'package:shop_provider/provider/lista_produtos.dart';
@@ -24,6 +25,9 @@ void main() => runApp(
           ),
           ChangeNotifierProvider(
             create: (cntxProvCarrinho) => ListaOrdenada(),
+          ),
+          ChangeNotifierProvider(
+            create: (cntxProvCarrinho) => Autenticacao(),
           ),
         ],
         child: const ShopProvider(),
