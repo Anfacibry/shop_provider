@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_provider/provider/autenticacao.dart';
 
 enum ModoLogin { login, registro }
 
@@ -23,18 +25,25 @@ class _AutFormLoginState extends State<AutFormLogin> {
     "email": "",
     "senha": "",
   };
-  void alterandoCarregando() {
+  Future<void> alterandoCarregando() async {
     final validacaoKey = keyForm.currentState?.validate() ?? false;
 
     if (!validacaoKey) {
       return;
     }
 
-    setState(() {
-      carregando = true;
-      keyForm.currentState?.save();
-      carregando = false;
-    });
+    setState(() => carregando = true);
+    keyForm.currentState?.save();
+    Autenticacao autenticacao = Provider.of(context, listen: false);
+    if (login) {
+      //Login
+    } else {
+      await autenticacao.registroLogin(
+        email: dadosLogin["email"]!,
+        senha: dadosLogin["senha"]!,
+      );
+    }
+    setState(() => carregando = true);
   }
 
   void loginOuRegistro() {
