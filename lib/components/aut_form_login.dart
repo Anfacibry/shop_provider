@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_provider/exceptions/autentic_exceptions.dart';
 import 'package:shop_provider/provider/autenticacao.dart';
 
 enum ModoLogin { login, registro }
@@ -25,6 +26,28 @@ class _AutFormLoginState extends State<AutFormLogin> {
     "email": "",
     "senha": "",
   };
+
+  void erroAutenticacao(String msg) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Mensagem de erro"),
+        content: Text(msg),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              setState(() {
+                carregando = false;
+              });
+            },
+            child: const Text("Fechar"),
+          )
+        ],
+      ),
+    );
+  }
+
   Future<void> alterandoCarregando() async {
     final validacaoKey = keyForm.currentState?.validate() ?? false;
 
@@ -35,13 +58,20 @@ class _AutFormLoginState extends State<AutFormLogin> {
     setState(() => carregando = true);
     keyForm.currentState?.save();
     Autenticacao autenticacao = Provider.of(context, listen: false);
-    if (login) {
-      //Login
-    } else {
-      await autenticacao.registroLogin(
-        email: dadosLogin["email"]!,
-        senha: dadosLogin["senha"]!,
-      );
+    try {
+      if (login) {
+        await autenticacao.login(
+          email: dadosLogin["email"]!,
+          senha: dadosLogin["senha"]!,
+        );
+      } else {
+        await autenticacao.registro(
+          email: dadosLogin["email"]!,
+          senha: dadosLogin["senha"]!,
+        );
+      }
+    } on AutenticExceptions catch (erro) {
+      erroAutenticacao(erro.toString());
     }
     setState(() => carregando = true);
   }
